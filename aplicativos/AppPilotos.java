@@ -71,18 +71,20 @@ public class AppPilotos {
                 System.out.println("\nPiloto cadastrado com sucesso.");
                 voltarMenu(in);
 
-            } else if (opcao == 2) {
+            } else if (opcao == 2) { // Listar pilotos cadastrados
                 if (qtdCadastrados == 0) {
                     System.out.println("\nNão há pilotos cadastrados para exibir.");
                 } else {
                     System.out.println("\nLista de pilotos cadastrados:");
                     for (int i = 0; i < qtdCadastrados; i++) {
-                        System.out.println(pilotos[i]);
+                        System.out.println(pilotos[i]); // `toString()` já mostra as aeronaves associadas
+                        System.out.println("--------------------");
                     }
                 }
                 voltarMenu(in);
+            }
 
-            } else if (opcao == 3) {
+            else if (opcao == 3) {
                 if (qtdCadastrados == 0) {
                     System.out.println("\nNão há pilotos cadastrados.");
                 } else {
@@ -105,7 +107,7 @@ public class AppPilotos {
                 }
                 voltarMenu(in);
 
-            } else if (opcao == 4) {
+            } else if (opcao == 4) { // Cadastrar aeronave
                 if (qtdCadastrados == 0) {
                     System.out.println("\nSem pilotos, não há como cadastrar uma aeronave.");
                     voltarMenu(in);
@@ -114,30 +116,32 @@ public class AppPilotos {
 
                 System.out.print("Digite o CPF do piloto para cadastrar a aeronave: ");
                 String cpfPiloto = in.nextLine();
-                boolean pilotoEncontrado = false;
+                Piloto pilotoEncontrado = null;
 
-                // Verifica se o piloto existe
+                // Procura o piloto pelo CPF
                 for (int i = 0; i < qtdCadastrados; i++) {
-                    if (pilotos[i].getCpf().equals(cpfPiloto)) {
-                        pilotoEncontrado = true;
-                        System.out.print("Modelo da aeronave: ");
-                        String modelo = in.nextLine();
-                        System.out.print("Número de registro: ");
-                        String numeroRegistro = in.nextLine();
-
-                        // Cadastra a aeronave
-                        aeronaves[i] = new Aeronave(modelo, numeroRegistro, cpfPiloto);
-                        System.out.println("\nAeronave cadastrada com sucesso.");
+                    if (pilotos[i] instanceof Piloto && pilotos[i].getCpf().equals(cpfPiloto)) {
+                        pilotoEncontrado = (Piloto) pilotos[i];
                         break;
                     }
                 }
 
-                if (!pilotoEncontrado) {
+                if (pilotoEncontrado != null) {
+                    System.out.print("Modelo da aeronave: ");
+                    String modelo = in.nextLine();
+                    System.out.print("Número de registro: ");
+                    String numeroRegistro = in.nextLine();
+
+                    // Criar e associar aeronave ao piloto
+                    Aeronave novaAeronave = new Aeronave(modelo, numeroRegistro, cpfPiloto);
+                    pilotoEncontrado.adicionarAeronave(novaAeronave);
+
+                    System.out.println("\nAeronave cadastrada e vinculada ao piloto com sucesso.");
+                } else {
                     System.out.println("\nPiloto não encontrado! Verifique o CPF.");
                 }
 
                 voltarMenu(in);
-
             } else if (opcao != 0) {
                 System.out.println("\nOpção inválida!");
             }
@@ -145,6 +149,7 @@ public class AppPilotos {
 
         System.out.println("Fim do programa!");
         in.close();
+
     }
 
     private static void voltarMenu(Scanner in) throws InterruptedException, IOException {
